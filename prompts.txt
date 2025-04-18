@@ -18,5 +18,3 @@ Below are the prompts used during AI-assisted development of the ClickHouse–Fl
 13. ok i think everything is working
 14. stop the backend
 15. ok
-
-(Include any additional prompts used in your session as required by your submission guidelines.)
