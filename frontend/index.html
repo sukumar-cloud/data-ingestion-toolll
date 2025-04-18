@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="IngestionApp">
+<head>
+    <meta charset="UTF-8">
+    <title>ClickHouse-FlatFile Ingestion Tool</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body ng-controller="MainController as vm">
+    <div class="container">
+        <h1>ClickHouse-FlatFile Ingestion Tool</h1>
+        <div class="panel">
+            <h2>Source Configuration</h2>
+            <select ng-model="vm.sourceType" ng-change="vm.onSourceTypeChange()">
+                <option value="clickhouse">ClickHouse</option>
+                <option value="file">Flat File (CSV)</option>
+            </select>
+            <div ng-if="vm.sourceType === 'clickhouse'">
+                <input type="text" ng-model="vm.source.host" placeholder="Host">
+                <input type="number" ng-model="vm.source.port" placeholder="Port">
+                <input type="text" ng-model="vm.source.database" placeholder="Database">
+                <input type="text" ng-model="vm.source.user" placeholder="User">
+                <input type="text" ng-model="vm.source.jwtToken" placeholder="JWT Token">
+                <button ng-click="vm.connectSource()">Connect</button>
+                <div ng-if="vm.sourceTables.length">
+                    <label>Table:</label>
+                    <select ng-model="vm.source.tableName" ng-options="t for t in vm.sourceTables" ng-change="vm.loadSourceColumns()"></select>
+                </div>
+            </div>
+            <div ng-if="vm.sourceType === 'file'">
+                <input type="file" file-model="vm.sourceFile">
+                <input type="text" ng-model="vm.source.delimiter" placeholder="Delimiter (e.g. ,)">
+                <button ng-click="vm.previewCsv('source')">Preview</button>
+            </div>
+        </div>
+        <div class="panel">
+            <h2>Target Configuration</h2>
+            <select ng-model="vm.targetType" ng-change="vm.onTargetTypeChange()">
+                <option value="clickhouse">ClickHouse</option>
+                <option value="file">Flat File (CSV)</option>
+            </select>
+            <div ng-if="vm.targetType === 'clickhouse'">
+                <input type="text" ng-model="vm.target.host" placeholder="Host">
+                <input type="number" ng-model="vm.target.port" placeholder="Port">
+                <input type="text" ng-model="vm.target.database" placeholder="Database">
+                <input type="text" ng-model="vm.target.user" placeholder="User">
+                <input type="text" ng-model="vm.target.jwtToken" placeholder="JWT Token">
+                <button ng-click="vm.connectTarget()">Connect</button>
+            </div>
+            <div ng-if="vm.targetType === 'file'">
+                <input type="text" ng-model="vm.target.filePath" placeholder="Output File Name">
+                <input type="text" ng-model="vm.target.delimiter" placeholder="Delimiter (e.g. ,)">
+            </div>
+        </div>
+        <div class="panel" ng-if="vm.columns.length">
+            <h2>Select Columns</h2>
+            <div ng-repeat="col in vm.columns">
+                <label><input type="checkbox" ng-model="col.selected"> {{col.name}}</label>
+            </div>
+        </div>
+        <div class="panel">
+            <button ng-click="vm.previewData()">Preview Data</button>
+            <button ng-click="vm.startIngestion()">Start Ingestion</button>
+        </div>
+        <div class="panel">
+            <h2>Status</h2>
+            <div>{{vm.status}}</div>
+            <div ng-if="vm.resultCount !== null">Records Processed: {{vm.resultCount}}</div>
+            <div ng-if="vm.error" class="error">Error: {{vm.error}}</div>
+        </div>
+        <div class="panel" ng-if="vm.previewRows.length">
+            <h2>Preview (First 100 Rows)</h2>
+            <table>
+                <tr>
+                    <th ng-repeat="col in vm.previewColumns">{{col}}</th>
+                </tr>
+                <tr ng-repeat="row in vm.previewRows">
+                    <td ng-repeat="col in vm.previewColumns">{{row[col]}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

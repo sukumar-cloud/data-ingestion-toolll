@@ -1,0 +1,14 @@
+com\cascade\assignment\service\FileService.class
+com\cascade\assignment\service\DataTransferService.class
+com\cascade\assignment\ClickhouseFlatfileIngestionToolApplication.class
+com\cascade\assignment\dto\ConnectionRequest.class
+com\cascade\assignment\exception\GlobalExceptionHandler.class
+com\cascade\assignment\controller\ConnectionController.class
+com\cascade\assignment\controller\IngestionController.class
+com\cascade\assignment\controller\SchemaController.class
+com\cascade\assignment\config\CorsConfig.class
+com\cascade\assignment\controller\PreviewController.class
+com\cascade\assignment\dto\IngestionRequest.class
+com\cascade\assignment\service\ClickHouseService.class
+com\cascade\assignment\dto\PreviewResponse.class
+com\cascade\assignment\config\CorsConfig$1.class

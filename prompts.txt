@@ -1,0 +1,22 @@
+AI Tool Usage Prompts Log
+========================
+
+Below are the prompts used during AI-assisted development of the ClickHouse–Flat File Ingestion Tool:
+
+1. try again to run backend
+2. yes do that then
+3. yes do anything please
+4. stop the running and restart the backend
+5. stop the backend
+6. fix type=null issue in backend
+7. add robust error handling for connection
+8. how to connect frontend and backend for CSV preview
+9. add CORS support for Spring Boot backend
+10. explain 400 error for /api/target/connect
+11. yes do this
+12. yes
+13. ok i think everything is working
+14. stop the backend
+15. ok
+
+(Include any additional prompts used in your session as required by your submission guidelines.)

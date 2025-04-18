@@ -1,0 +1,13 @@
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\service\DataTransferService.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\config\CorsConfig.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\controller\PreviewController.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\controller\SchemaController.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\exception\GlobalExceptionHandler.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\dto\ConnectionRequest.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\service\ClickHouseService.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\controller\ConnectionController.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\ClickhouseFlatfileIngestionToolApplication.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\controller\IngestionController.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\service\FileService.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\dto\IngestionRequest.java
+C:\Users\WELCOME\CascadeProjects\clickhouse-flatfile-ingestion-tool\backend\src\main\java\com\cascade\assignment\dto\PreviewResponse.java
