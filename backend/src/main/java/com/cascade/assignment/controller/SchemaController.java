@@ -26,7 +26,11 @@ public class SchemaController {
     public ResponseEntity<Map<String, Object>> listTables(@RequestBody ConnectionRequest request) {
         try {
             if ("clickhouse".equalsIgnoreCase(request.getType())) {
-                try (java.sql.Connection conn = clickHouseService.connectToClickHouse(request.getHost(), request.getPort(), request.getDatabase(), request.getUser(), request.getJwtToken())) {
+                Integer portObj = request.getPort();
+                int port = (portObj != null) ? portObj : 8123;
+                Boolean httpsObj = request.getUseHttps();
+                boolean useHttps = (httpsObj != null) ? httpsObj : (port == 8443);
+                try (java.sql.Connection conn = clickHouseService.connectToClickHouse(request.getHost(), port, request.getDatabase(), request.getUser(), request.getPassword(), request.getJwtToken(), useHttps)) {
                     java.util.List<String> tables = clickHouseService.listTables(conn);
                     return ResponseEntity.ok(Map.of("tables", tables));
                 }
@@ -44,7 +48,11 @@ public class SchemaController {
     public ResponseEntity<Map<String, Object>> listColumns(@RequestBody ConnectionRequest request) {
         try {
             if ("clickhouse".equalsIgnoreCase(request.getType())) {
-                try (java.sql.Connection conn = clickHouseService.connectToClickHouse(request.getHost(), request.getPort(), request.getDatabase(), request.getUser(), request.getJwtToken())) {
+                Integer portObj = request.getPort();
+                int port = (portObj != null) ? portObj : 8123;
+                Boolean httpsObj = request.getUseHttps();
+                boolean useHttps = (httpsObj != null) ? httpsObj : (port == 8443);
+                try (java.sql.Connection conn = clickHouseService.connectToClickHouse(request.getHost(), port, request.getDatabase(), request.getUser(), request.getPassword(), request.getJwtToken(), useHttps)) {
                     java.util.List<String> columns = clickHouseService.listColumns(conn, request.getTableName());
                     return ResponseEntity.ok(Map.of("columns", columns));
                 }

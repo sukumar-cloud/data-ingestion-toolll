@@ -16,6 +16,8 @@ app.directive('fileModel', ['$parse', function ($parse) {
 }]);
 
 app.controller('MainController', ['$http', '$scope', function($http, $scope) {
+    // Set the base URL for API calls
+    var API_BASE_URL = 'http://localhost:8080/api';
     var vm = this;
 
     // State
@@ -35,7 +37,7 @@ app.controller('MainController', ['$http', '$scope', function($http, $scope) {
     vm.connectSource = function() {
         vm.status = 'Connecting to source...';
         vm.error = '';
-        $http.post('http://localhost:8080/api/source/connect', vm.source)
+        $http.post(API_BASE_URL + '/source/connect', vm.source)
             .then(function(res) {
                 vm.status = res.data;
                 if(vm.sourceType === 'clickhouse') {
@@ -47,7 +49,7 @@ app.controller('MainController', ['$http', '$scope', function($http, $scope) {
     };
 
     vm.listSourceTables = function() {
-        $http.post('http://localhost:8080/api/source/tables', vm.source)
+        $http.post(API_BASE_URL + '/source/tables', vm.source)
             .then(function(res) {
                 vm.sourceTables = res.data.tables || [];
             }, function(err) {
@@ -58,7 +60,7 @@ app.controller('MainController', ['$http', '$scope', function($http, $scope) {
     vm.loadSourceColumns = function() {
         var payload = angular.copy(vm.source);
         payload.tableName = vm.source.tableName;
-        $http.post('http://localhost:8080/api/source/columns', payload)
+        $http.post(API_BASE_URL + '/source/columns', payload)
             .then(function(res) {
                 vm.columns = (res.data.columns || []).map(function(col) {
                     return { name: col, selected: true };
@@ -69,6 +71,8 @@ app.controller('MainController', ['$http', '$scope', function($http, $scope) {
     };
 
     // Target connect
+    function trimStr(v) { return (typeof v === 'string') ? v.trim() : v; }
+
     function sanitizeTarget(target, targetType) {
         // Fix typo in user field
         if (target.user && target.user.toLowerCase() === 'defualt') {
@@ -76,14 +80,16 @@ app.controller('MainController', ['$http', '$scope', function($http, $scope) {
         }
         return {
             type: targetType || '',
-            host: target.host || '',
+            host: trimStr(target.host) || '',
             port: target.port || '',
-            database: target.database || '',
-            user: target.user || '',
+            database: trimStr(target.database) || '',
+            user: trimStr(target.user) || '',
+            password: trimStr(target.password) || '',
             jwtToken: target.jwtToken || '',
             filePath: target.filePath || '',
             delimiter: target.delimiter || '',
-            tableName: target.tableName || ''
+            tableName: trimStr(target.tableName) || '',
+            useHttps: !!target.useHttps
         };
     }
 
@@ -92,7 +98,7 @@ app.controller('MainController', ['$http', '$scope', function($http, $scope) {
         vm.error = '';
         var payload = sanitizeTarget(vm.target, vm.targetType);
         console.log('Target connect payload:', payload);
-        $http.post('http://localhost:8080/api/target/connect', payload)
+        $http.post(API_BASE_URL + '/target/connect', payload)
             .then(function(res) {
                 vm.status = res.data;
             }, function(err) {
@@ -115,7 +121,7 @@ app.controller('MainController', ['$http', '$scope', function($http, $scope) {
         var fd = new FormData();
         fd.append('file', file);
         fd.append('delimiter', delimiter || ',');
-        $http.post('http://localhost:8080/api/preview-csv', fd, {
+        $http.post(API_BASE_URL + '/preview-csv', fd, {
             transformRequest: angular.identity,
             headers: { 'Content-Type': undefined }
         }).then(function(res) {
@@ -131,7 +137,7 @@ app.controller('MainController', ['$http', '$scope', function($http, $scope) {
         if(vm.sourceType === 'clickhouse') {
             var payload = angular.copy(vm.source);
             payload.tableName = vm.source.tableName;
-            $http.post('http://localhost:8080/api/source/preview', payload)
+            $http.post(API_BASE_URL + '/source/preview', payload)
                 .then(function(res) {
                     vm.previewRows = res.data.data || [];
                     vm.previewColumns = res.data.columns || [];
@@ -151,26 +157,31 @@ app.controller('MainController', ['$http', '$scope', function($http, $scope) {
         var selectedColumns = vm.columns.filter(function(col) { return col.selected; }).map(function(col) { return col.name; });
         var ingestionRequest = {
             source: angular.copy(vm.source),
-            target: angular.copy(vm.target),
+            target: sanitizeTarget(vm.target, vm.targetType),
             columns: selectedColumns
         };
-        if(vm.sourceType === 'file') {
-            // File upload
+        if (vm.sourceType === 'file' && vm.targetType === 'clickhouse') {
+            // File -> ClickHouse upload
             var fd = new FormData();
             fd.append('file', vm.sourceFile);
-            fd.append('ingestionRequest', new Blob([JSON.stringify(ingestionRequest)], {type: 'application/json'}));
-            $http.post('http://localhost:8080/api/transfer-csv-to-clickhouse', fd, {
+            fd.append('ingestionRequest', new Blob([JSON.stringify(ingestionRequest)], { type: 'application/json' }));
+            $http.post(API_BASE_URL + '/transfer-csv-to-clickhouse', fd, {
                 transformRequest: angular.identity,
                 headers: { 'Content-Type': undefined }
-            }).then(function(res) {
+            }).then(function (res) {
                 vm.status = res.data.status;
                 vm.resultCount = res.data.recordsTransferred;
-            }, function(err) {
+            }, function (err) {
                 vm.error = err.data || 'Ingestion failed';
             });
+        } else if (vm.sourceType === 'file' && vm.targetType === 'file') {
+            // Not implemented in backend – avoid sending wrong request
+            vm.status = '';
+            vm.error = 'File -> File ingestion is not supported yet. Please choose ClickHouse as target.';
+            return;
         } else {
             // General ingestion (ClickHouse to File or ClickHouse to ClickHouse)
-            $http.post('http://localhost:8080/api/ingest', ingestionRequest)
+            $http.post(API_BASE_URL + '/ingest', ingestionRequest)
                 .then(function(res) {
                     vm.status = res.data.status;
                     vm.resultCount = res.data.recordsTransferred;

@@ -13,9 +13,9 @@ public class DataTransferService {
     }
 
     // ClickHouse -> Flat File (CSV export)
-    public int transferClickHouseToCsv(String host, int port, String database, String user, String jwtToken,
+    public int transferClickHouseToCsv(String host, int port, String database, String user, String password, String jwtToken, boolean useHttps,
                                        String tableName, java.io.File targetFile, char delimiter, java.util.List<String> columns) throws Exception {
-        try (java.sql.Connection conn = clickHouseService.connectToClickHouse(host, port, database, user, jwtToken)) {
+        try (java.sql.Connection conn = clickHouseService.connectToClickHouse(host, port, database, user, password, jwtToken, useHttps)) {
             java.util.List<java.util.Map<String, Object>> data = clickHouseService.previewTable(conn, tableName, Integer.MAX_VALUE, 0);
             // If columns are specified, filter data
             if (columns != null && !columns.isEmpty()) {
@@ -27,14 +27,14 @@ public class DataTransferService {
     }
 
     // Flat File -> ClickHouse (CSV import)
-    public int transferCsvToClickHouse(java.io.File csvFile, char delimiter, String host, int port, String database, String user, String jwtToken,
+    public int transferCsvToClickHouse(java.io.File csvFile, char delimiter, String host, int port, String database, String user, String password, String jwtToken, boolean useHttps,
                                        String tableName, java.util.List<String> columns) throws Exception {
         java.util.List<java.util.Map<String, Object>> data = fileService.readCsv(csvFile, delimiter);
         // If columns are specified, filter data
         if (columns != null && !columns.isEmpty()) {
             data = filterColumns(data, columns);
         }
-        try (java.sql.Connection conn = clickHouseService.connectToClickHouse(host, port, database, user, jwtToken)) {
+        try (java.sql.Connection conn = clickHouseService.connectToClickHouse(host, port, database, user, password, jwtToken, useHttps)) {
             return clickHouseService.insertData(conn, tableName, columns != null && !columns.isEmpty() ? columns : new java.util.ArrayList<>(data.get(0).keySet()), data);
         }
     }

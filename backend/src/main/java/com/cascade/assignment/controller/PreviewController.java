@@ -9,7 +9,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = {"http://localhost:8000", "http://localhost:8080"})
 public class PreviewController {
 
     // TODO: Replace with real ClickHouse/CSV logic
@@ -26,7 +26,11 @@ public class PreviewController {
         PreviewResponse response = new PreviewResponse();
         try {
             if ("clickhouse".equalsIgnoreCase(request.getType())) {
-                try (java.sql.Connection conn = clickHouseService.connectToClickHouse(request.getHost(), request.getPort(), request.getDatabase(), request.getUser(), request.getJwtToken())) {
+                Integer portObj = request.getPort();
+                int port = (portObj != null) ? portObj : 8123;
+                Boolean httpsObj = request.getUseHttps();
+                boolean useHttps = (httpsObj != null) ? httpsObj : (port == 8443);
+                try (java.sql.Connection conn = clickHouseService.connectToClickHouse(request.getHost(), port, request.getDatabase(), request.getUser(), request.getPassword(), request.getJwtToken(), useHttps)) {
                     java.util.List<java.util.Map<String, Object>> data = clickHouseService.previewTable(conn, request.getTableName(), 100, 0);
                     response.setData(data);
                     if (!data.isEmpty()) {

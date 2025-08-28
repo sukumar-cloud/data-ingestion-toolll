@@ -20,7 +20,9 @@
                 <input type="number" ng-model="vm.source.port" placeholder="Port">
                 <input type="text" ng-model="vm.source.database" placeholder="Database">
                 <input type="text" ng-model="vm.source.user" placeholder="User">
-                <input type="text" ng-model="vm.source.jwtToken" placeholder="JWT Token">
+                <input type="password" ng-model="vm.source.password" placeholder="Password (optional)">
+                <input type="text" ng-model="vm.source.jwtToken" placeholder="JWT Token (optional)">
+                <label><input type="checkbox" ng-model="vm.source.useHttps"> Use HTTPS</label>
                 <button ng-click="vm.connectSource()">Connect</button>
                 <div ng-if="vm.sourceTables.length">
                     <label>Table:</label>
@@ -44,7 +46,10 @@
                 <input type="number" ng-model="vm.target.port" placeholder="Port">
                 <input type="text" ng-model="vm.target.database" placeholder="Database">
                 <input type="text" ng-model="vm.target.user" placeholder="User">
-                <input type="text" ng-model="vm.target.jwtToken" placeholder="JWT Token">
+                <input type="password" ng-model="vm.target.password" placeholder="Password (for cloud)">
+                <input type="text" ng-model="vm.target.jwtToken" placeholder="JWT Token (optional)">
+                <label><input type="checkbox" ng-model="vm.target.useHttps"> Use HTTPS</label>
+                <input type="text" ng-model="vm.target.tableName" placeholder="Target Table (e.g. default.people)">
                 <button ng-click="vm.connectTarget()">Connect</button>
             </div>
             <div ng-if="vm.targetType === 'file'">

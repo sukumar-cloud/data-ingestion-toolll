@@ -8,6 +8,7 @@ com\cascade\assignment\controller\IngestionController.class
 com\cascade\assignment\controller\SchemaController.class
 com\cascade\assignment\config\CorsConfig.class
 com\cascade\assignment\controller\PreviewController.class
+com\cascade\assignment\controller\HealthController.class
 com\cascade\assignment\dto\IngestionRequest.class
 com\cascade\assignment\service\ClickHouseService.class
 com\cascade\assignment\dto\PreviewResponse.class

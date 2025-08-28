@@ -5,9 +5,20 @@ import java.sql.*;
 
 @Service
 public class ClickHouseService {
-    public Connection connectToClickHouse(String host, int port, String database, String user, String jwtToken) throws SQLException {
-        String url = String.format("jdbc:clickhouse://%s:%d/%s?custom_http_headers=Authorization=Bearer %s", host, port, database, jwtToken);
-        return DriverManager.getConnection(url, user, "");
+    public Connection connectToClickHouse(String host, int port, String database, String user, String password, String jwtToken, boolean useHttps) throws SQLException {
+        String scheme = useHttps ? "jdbc:clickhouse:https://" : "jdbc:clickhouse://";
+        StringBuilder url = new StringBuilder(String.format("%s%s:%d/%s", scheme, host, port, database));
+        boolean hasJwt = jwtToken != null && !jwtToken.isBlank();
+        String sep = "?";
+        url.append(sep).append("compress=0");
+        sep = "&";
+        if (hasJwt) {
+            url.append(sep).append("custom_http_headers=")
+               .append("Authorization=Bearer ")
+               .append(jwtToken);
+        }
+        String pwd = password != null ? password : "";
+        return DriverManager.getConnection(url.toString(), user, pwd);
     }
 
     public java.util.List<String> listTables(Connection conn) throws SQLException {
