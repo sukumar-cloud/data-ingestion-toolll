@@ -15,4 +15,16 @@ public class ConnectionRequest {
     private String delimiter;
     private String tableName;
     private Boolean useHttps; 
+
+    public String getType() { return type; }
+    public String getHost() { return host; }
+    public Integer getPort() { return port; }
+    public String getDatabase() { return database; }
+    public String getUser() { return user; }
+    public String getPassword() { return password; }
+    public String getJwtToken() { return jwtToken; }
+    public String getFilePath() { return filePath; }
+    public String getDelimiter() { return delimiter; }
+    public String getTableName() { return tableName; }
+    public Boolean getUseHttps() { return useHttps; }
 }
