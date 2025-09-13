@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS default.people (
 
 ## Typical Flow (CSV → ClickHouse)
 1) Choose CSV and delimiter, click Preview to confirm columns.
-2) Fill Target (as above), click Connect. You should see “ClickHouse target connected successfully”.
+2) Fill Target (as above), click Connect. You should see "ClickHouse target connected successfully".
 3) Click Start Ingestion. On success, status shows records processed.
 4) Verify in Cloud console:
 ```sql
@@ -74,7 +74,6 @@ SELECT * FROM default.people ORDER BY id;
 * Maven
 * A ClickHouse instance (local or Cloud)
 
-<<<<<<< HEAD
 ## Deploy to Render
 
 1. **Prerequisites**:
@@ -138,7 +137,3 @@ SELECT * FROM default.people ORDER BY id;
 
 ## Getting Help
 If you encounter any issues or have questions about using this tool, please open an issue in the repository.
-=======
-## AI Tool Usage
-See `prompts.txt` for prompts used during AI‑assisted development.
->>>>>>> 742bfc5c775cc8d6d5f629a5a45079cb5d84ed4d
