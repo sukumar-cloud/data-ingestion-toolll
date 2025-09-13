@@ -9,9 +9,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * CSV files and ClickHouse databases with support for various authentication methods.
  */
 @SpringBootApplication
-public class ClickHouseDataIngestionApp {
+public class ClickhouseFlatfileIngestionToolApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ClickHouseDataIngestionApp.class, args);
+        SpringApplication.run(ClickhouseFlatfileIngestionToolApplication.class, args);
     }
 }
