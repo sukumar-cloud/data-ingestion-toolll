@@ -69,48 +69,12 @@ SELECT count(*) FROM default.people;
 SELECT * FROM default.people ORDER BY id;
 ```
 
-## Troubleshooting
-* __Port 8080 in use__: Stop the other process or start backend on another port.
-* __400 on Connect__: Now returns descriptive messages (auth/host/DB). Ensure host is trimmed and HTTPS checked for 8443.
-* __LZ4 not supported__: Handled by adding `compress=0` to JDBC URL. If needed, switch to `compress_algorithm=gzip` later.
-* __Host becomes localhost__: The UI now trims inputs and sanitizes payloads. Re‑enter host without spaces.
-
-## Why Spring Boot
-* Rapid REST API development with minimal boilerplate (embedded Tomcat, JSON, validation, multipart uploads).
-* Strong JDBC integration for ClickHouse (`clickhouse-jdbc`).
-* Clear separation: DTOs (`ConnectionRequest`), controllers, and services (`ClickHouseService`, `DataTransferService`).
-* Operationally simple (`mvn spring-boot:run`), easy to extend and maintain.
-
-## Interview Q&A (Project‑Focused)
-* __Q: What problem does this tool solve?__
-  A: Bridges CSV files and ClickHouse, enabling quick ingestion to a remote/cloud database with preview and schema awareness.
-
-* __Q: How do you connect securely to ClickHouse Cloud?__
-  A: Use HTTPS on 8443 with password (or JWT). The JDBC URL is `jdbc:clickhouse:https://host:8443/db?compress=0`. HTTPS is auto‑enabled for 8443.
-
-* __Q: Why `compress=0`?__
-  A: To avoid client‑side LZ4 dependency errors over TLS. Optionally switch to `compress_algorithm=gzip` for compressed transport if needed.
-
-* __Q: Where is the connection logic?__
-  A: `backend/src/main/java/com/cascade/assignment/service/ClickHouseService.java::connectToClickHouse()` builds the URL, adds JWT header when provided, and opens the JDBC connection.
-
-* __Q: How is CSV parsed and inserted?__
-  A: `DataTransferService` uses Apache Commons CSV, maps selected columns, and inserts via prepared statements in a batch for efficiency.
-
-* __Q: How does the Connect button validate credentials?__
-  A: `ConnectionController.connectTarget()` opens a real connection using `ClickHouseService`. It defaults port 8123, forces HTTPS for 8443, and returns specific SQL errors to the client.
-
-* __Q: How does the UI prevent common mistakes (like empty host)?__
-  A: `frontend/app.js` sanitizes inputs (trims host/db/user/password/table) and uses the sanitized payload for both Connect and Start Ingestion.
-
-* __Q: What would you improve next?__
-  A: Add schema inference from CSV, ClickHouse → CSV export with pagination, stronger validation, secrets management, and a modern frontend framework for richer UX.
-
 ## Requirements
 * Java 17+
 * Maven
 * A ClickHouse instance (local or Cloud)
 
+<<<<<<< HEAD
 ## Deploy to Render
 
 1. **Prerequisites**:
@@ -174,3 +138,7 @@ SELECT * FROM default.people ORDER BY id;
 
 ## Getting Help
 If you encounter any issues or have questions about using this tool, please open an issue in the repository.
+=======
+## AI Tool Usage
+See `prompts.txt` for prompts used during AI‑assisted development.
+>>>>>>> 742bfc5c775cc8d6d5f629a5a45079cb5d84ed4d
