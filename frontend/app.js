@@ -17,7 +17,7 @@ app.directive('fileModel', ['$parse', function ($parse) {
 
 app.controller('MainController', ['$http', '$scope', function($http, $scope) {
     // Set the base URL for API calls - uses environment variable or falls back to localhost
-    var API_BASE_URL = window.API_BASE_URL || 'http://localhost:8080/api';
+    var API_BASE_URL = window.API_BASE_URL || 'https://data-ingestion-toolll.onrender.com/api';
     console.log('Using API base URL:', API_BASE_URL);
     var vm = this;
 
@@ -176,12 +176,10 @@ app.controller('MainController', ['$http', '$scope', function($http, $scope) {
                 vm.error = err.data || 'Ingestion failed';
             });
         } else if (vm.sourceType === 'file' && vm.targetType === 'file') {
-            // Not implemented in backend – avoid sending wrong request
             vm.status = '';
             vm.error = 'File -> File ingestion is not supported yet. Please choose ClickHouse as target.';
             return;
         } else {
-            // General ingestion (ClickHouse to File or ClickHouse to ClickHouse)
             $http.post(API_BASE_URL + '/ingest', ingestionRequest)
                 .then(function(res) {
                     vm.status = res.data.status;
