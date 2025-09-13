@@ -1,0 +1,53 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+*.env
+*.properties
+!application.properties
+
+# Frontend
+node_modules/
+frontend/package-lock.json
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trabs
+ehthumbs.db
+Thumbs.db
+
+# Local scripts
+update_packages.ps1
+
+# ClickHouse data (if any)
+clickhouse_data/
+
+# Local development overrides
+local.properties
+
+# Build output
+backend/target/
+frontend/dist/
+
+# System Files
+.DS_Store
+Thumbs.db

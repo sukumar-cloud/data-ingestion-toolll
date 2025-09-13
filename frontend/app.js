@@ -16,8 +16,9 @@ app.directive('fileModel', ['$parse', function ($parse) {
 }]);
 
 app.controller('MainController', ['$http', '$scope', function($http, $scope) {
-    // Set the base URL for API calls
-    var API_BASE_URL = 'http://localhost:8080/api';
+    // Set the base URL for API calls - uses environment variable or falls back to localhost
+    var API_BASE_URL = window.API_BASE_URL || 'http://localhost:8080/api';
+    console.log('Using API base URL:', API_BASE_URL);
     var vm = this;
 
     // State

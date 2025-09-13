@@ -1,0 +1,12 @@
+**/target
+**/node_modules
+**/.git
+**/.mvn
+**/.idea
+**/*.iml
+**/Dockerfile
+**/docker-compose*.yml
+**/README.md
+**/.gitignore
+**/.dockerignore
+**/prompts.txt

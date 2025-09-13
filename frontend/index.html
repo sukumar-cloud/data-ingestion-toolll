@@ -2,13 +2,14 @@
 <html lang="en" ng-app="IngestionApp">
 <head>
     <meta charset="UTF-8">
-    <title>ClickHouse-FlatFile Ingestion Tool</title>
+    <title>ClickHouse Data Ingestion Tool</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="env-config.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body ng-controller="MainController as vm">
     <div class="container">
-        <h1>ClickHouse-FlatFile Ingestion Tool</h1>
+        <h1>ClickHouse Data Ingestion Tool</h1>
         <div class="panel">
             <h2>Source Configuration</h2>
             <select ng-model="vm.sourceType" ng-change="vm.onSourceTypeChange()">

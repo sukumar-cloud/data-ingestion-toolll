@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: clickhouse-ingestion-tool
+    env: docker
+    build:
+      dockerfile: frontend/Dockerfile
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://clickhouse-ingestion-backend.onrender.com
+    plan: free
+    numInstances: 1
+    healthCheckPath: /
+    autoDeploy: true
+
+  - type: web
+    name: clickhouse-ingestion-backend
+    env: docker
+    build:
+      dockerfile: backend/Dockerfile
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+    plan: free
+    numInstances: 1
+    healthCheckPath: /actuator/health
+    autoDeploy: true

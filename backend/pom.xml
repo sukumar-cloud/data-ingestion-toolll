@@ -2,12 +2,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.cascade.assignment</groupId>
-    <artifactId>clickhouse-flatfile-ingestion-tool</artifactId>
+    <groupId>com.yourname</groupId>
+    <artifactId>clickhouse-data-ingestion-tool</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>ClickHouse FlatFile Ingestion Tool</name>
-    <description>Bidirectional ingestion between ClickHouse and Flat File (CSV)</description>
+    <name>ClickHouse Data Ingestion Tool</name>
+    <description>Web application for seamless data transfer between CSV files and ClickHouse databases</description>
     <properties>
         <java.version>17</java.version>
         <spring-boot.version>3.2.0</spring-boot.version>
