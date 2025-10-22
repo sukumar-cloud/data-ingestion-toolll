@@ -2,6 +2,8 @@ package com.cascade.assignment.service;
 
 import org.springframework.stereotype.Service;
 import java.sql.*;
+import java.io.*;
+import java.util.*;
 
 @Service
 public class ClickHouseService {
@@ -67,6 +69,7 @@ public class ClickHouseService {
         String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, colStr, placeholders);
         int count = 0;
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
             for (java.util.Map<String, Object> row : data) {
                 for (int i = 0; i < columns.size(); i++) {
                     ps.setObject(i + 1, row.get(columns.get(i)));
@@ -74,8 +77,95 @@ public class ClickHouseService {
                 ps.addBatch();
             }
             int[] results = ps.executeBatch();
+            conn.commit();
             for (int r : results) if (r >= 0) count++;
         }
         return count;
+    }
+
+    public int insertDataInChunks(Connection conn, String tableName, java.util.List<String> columns, java.util.List<java.util.Map<String, Object>> data, int chunkSize) throws SQLException {
+        if (columns == null || columns.isEmpty() || data == null || data.isEmpty()) return 0;
+        String colStr = String.join(",", columns);
+        String placeholders = String.join(",", java.util.Collections.nCopies(columns.size(), "?"));
+        String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, colStr, placeholders);
+        int totalInserted = 0;
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            conn.setAutoCommit(false);
+            for (int i = 0; i < data.size(); i += chunkSize) {
+                int end = Math.min(i + chunkSize, data.size());
+                java.util.List<java.util.Map<String, Object>> chunk = data.subList(i, end);
+                for (java.util.Map<String, Object> row : chunk) {
+                    for (int j = 0; j < columns.size(); j++) {
+                        ps.setObject(j + 1, row.get(columns.get(j)));
+                    }
+                    ps.addBatch();
+                }
+                int[] results = ps.executeBatch();
+                totalInserted += results.length;
+                conn.commit();
+                ps.clearBatch();
+            }
+        }
+        return totalInserted;
+    }
+
+    public int insertDataStreaming(Connection conn, String tableName, java.util.List<String> columns, java.io.InputStream csvStream, char delimiter) throws SQLException, java.io.IOException {
+        String colStr = String.join(",", columns);
+        String placeholders = String.join(",", java.util.Collections.nCopies(columns.size(), "?"));
+        String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, colStr, placeholders);
+        int totalInserted = 0;
+        int batchSize = 1000;
+        try (PreparedStatement ps = conn.prepareStatement(sql);
+             java.io.Reader reader = new java.io.InputStreamReader(csvStream);
+             org.apache.commons.csv.CSVParser parser = new org.apache.commons.csv.CSVParser(reader,
+                 org.apache.commons.csv.CSVFormat.DEFAULT.withDelimiter(delimiter).withFirstRecordAsHeader())) {
+            conn.setAutoCommit(false);
+            int count = 0;
+            for (org.apache.commons.csv.CSVRecord record : parser) {
+                for (int i = 0; i < columns.size(); i++) {
+                    ps.setObject(i + 1, record.get(columns.get(i)));
+                }
+                ps.addBatch();
+                count++;
+                if (count % batchSize == 0) {
+                    int[] results = ps.executeBatch();
+                    totalInserted += results.length;
+                    conn.commit();
+                    ps.clearBatch();
+                }
+            }
+            if (count % batchSize != 0) {
+                int[] results = ps.executeBatch();
+                totalInserted += results.length;
+                conn.commit();
+            }
+        }
+        return totalInserted;
+    }
+
+    public void createTableIfNotExists(Connection conn, String tableName, java.util.Map<String, Object> sampleRow) throws SQLException {
+        StringBuilder sql = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append(tableName).append(" (");
+        for (java.util.Map.Entry<String, Object> entry : sampleRow.entrySet()) {
+            sql.append(entry.getKey()).append(" ").append(inferClickHouseType(entry.getValue())).append(", ");
+        }
+        sql.setLength(sql.length() - 2); // Remove trailing comma
+        sql.append(") ENGINE = MergeTree() ORDER BY tuple()");
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute(sql.toString());
+        }
+    }
+
+    private String inferClickHouseType(Object value) {
+        if (value == null) return "Nullable(String)";
+        if (value instanceof Number) {
+            if (value instanceof Integer) return "Int32";
+            if (value instanceof Long) return "Int64";
+            return "Float64";
+        } else if (value instanceof Boolean) {
+            return "UInt8";
+        } else if (value instanceof java.util.Date) {
+            return "DateTime";
+        }
+        return "String";
     }
 }
