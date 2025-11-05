@@ -253,10 +253,9 @@ MIT
 
 ---
 
-## 🛠️ Roadmap
+## 🛠️ Future Enhnacement Roadmap
 
 * [ ] Upgrade frontend to **Angular 17**
 * [ ] Add column mapping UI and dry-run validation
-* [ ] JWT-based user authentication
 * [ ] Add metrics + Prometheus support
 * [ ] S3 ingestion (server-side, no browser upload)
