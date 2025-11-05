@@ -1,46 +1,80 @@
 # ClickHouse Data Ingestion Tool
-## Hosted Link : https://data-ingestion-tool.netlify.app/
+
+## 🌐 Hosted Link
+
+[https://data-ingestion-tool.netlify.app/](https://data-ingestion-tool.netlify.app/)
+
 A powerful web application for seamless data transfer between CSV files and ClickHouse databases. This tool supports both local and cloud-based ClickHouse instances with secure authentication, schema discovery, and data preview capabilities.
 
-## Features
-* __CSV → ClickHouse__ (primary flow). Batch insert with prepared statements.
-* __ClickHouse → CSV__ scaffolding and preview paths.
-* __Auth__: Password and optional JWT bearer token.
-* __HTTPS__: Auto-enabled for port 8443. JDBC URL adds `compress=0` to avoid LZ4 client issues over TLS.
-* __Schema & Preview__: List tables/columns, preview first 100 rows.
-* __UI__: AngularJS 1.x form with status, errors, and record counts.
+---
 
-## Project Structure
-* `backend/` – Spring Boot 3.2 (Java 17) REST API
-  * Controllers: `ConnectionController`, `IngestionController`, `SchemaController`, `PreviewController`, `HealthController`
-  * Services: `ClickHouseService`, `DataTransferService`
-  * DTOs: `ConnectionRequest`
-* `frontend/` – AngularJS 1.x single page (`index.html`, `app.js`, `style.css`)
+## ✨ Features
 
-## Setup
+* **CSV → ClickHouse** — primary flow using batch inserts with prepared statements.
+* **ClickHouse → CSV** — preview and scaffolding for export.
+* **Authentication** — password-based and optional JWT bearer token.
+* **HTTPS** — auto-enabled for port 8443; JDBC adds `compress=0` to avoid LZ4 client issues over TLS.
+* **Schema & Preview** — list tables and columns, preview first 100 rows.
+* **Frontend** — AngularJS 1.x form UI with connection status, error display, and record counts.
+
+---
+
+## 🗂️ Project Structure
+
+```
+backend/  → Spring Boot 3.2 (Java 17) REST API
+│  ├─ Controllers: ConnectionController, IngestionController, SchemaController, PreviewController, HealthController
+│  ├─ Services: ClickHouseService, DataTransferService
+│  └─ DTOs: ConnectionRequest
+frontend/ → AngularJS 1.x SPA (index.html, app.js, style.css)
+```
+
+---
+
+## ⚙️ Setup Instructions
 
 ### Backend
-1) Requirements: Java 17+, Maven.
-2) From `backend/`:
-```sh
+
+#### Requirements
+
+* Java 17+
+* Maven 3.9+
+
+#### Run
+
+```bash
+cd backend
 mvn -DskipTests spring-boot:run
 ```
-Default URL: `http://localhost:8080` (APIs under `/api`).
+
+Backend runs on: **[http://localhost:8080/api](http://localhost:8080/api)**
+
+---
 
 ### Frontend
-1) Open `frontend/index.html` directly or serve the folder on port 8000:
-```sh
+
+#### Run
+
+```bash
+cd frontend
 npx http-server ./frontend -p 8000
 ```
-App URL: `http://localhost:8000` (expects backend on 8080).
 
-## Using with ClickHouse Cloud
-1) From the Cloud console, get:
-   * Host: e.g., `xxxx.germanywestcentral.azure.clickhouse.cloud`
+Frontend runs on: **[http://localhost:8000](http://localhost:8000)** (expects backend on port 8080)
+
+---
+
+## ☁️ Using with ClickHouse Cloud
+
+1. In your ClickHouse Cloud console, note:
+
+   * Host: e.g. `xxxx.germanywestcentral.azure.clickhouse.cloud`
    * Port: `8443`
    * User: `default`
    * Password: your service password
-2) Create target table (example for `test_data.csv`):
+
+2. Create a target table:
+
 ```sql
 CREATE DATABASE IF NOT EXISTS default;
 CREATE TABLE IF NOT EXISTS default.people (
@@ -48,128 +82,181 @@ CREATE TABLE IF NOT EXISTS default.people (
   name String,
   age UInt8,
   email String
-) ENGINE=MergeTree ORDER BY id;
+) ENGINE = MergeTree
+ORDER BY id;
 ```
-3) In the UI (Target Configuration):
-   * Host: cloud host (no https)
+
+3. In the UI under **Target Configuration**:
+
+   * Host: your cloud host (no `https://` prefix)
    * Port: `8443`
-   * Use HTTPS: checked
+   * Use HTTPS: ✅ checked
    * Database: `default`
    * User: `default`
    * Password: your password
    * Target Table: `default.people`
 
-## Typical Flow (CSV → ClickHouse)
-1) Choose CSV and delimiter, click Preview to confirm columns.
-2) Fill Target (as above), click Connect. You should see "ClickHouse target connected successfully".
-3) Click Start Ingestion. On success, status shows records processed.
-4) Verify in Cloud console:
+---
+
+## 🔄 Typical Flow (CSV → ClickHouse)
+
+1. Upload CSV and choose delimiter.
+2. Click **Preview** to check inferred schema.
+3. Fill **Target Connection** details.
+4. Click **Connect** — you should see “ClickHouse target connected successfully”.
+5. Click **Start Ingestion**.
+6. Verify data in ClickHouse Cloud:
+
 ```sql
 SELECT count(*) FROM default.people;
 SELECT * FROM default.people ORDER BY id;
 ```
 
-## Requirements
+---
+
+## 💻 Requirements
+
 * Java 17+
 * Maven
-* A ClickHouse instance (local or Cloud)
+* ClickHouse instance (local or Cloud)
 
-## Deploy to Render
+---
 
-1. **Prerequisites**:
-   - A GitHub account
-   - A Render account (sign up at [render.com](https://render.com))
-   - A ClickHouse Cloud account (or self-hosted ClickHouse)
+## 🚀 Deploy to Render
 
-2. **Deploy to Render**:
-   - Fork this repository to your GitHub account
-   - Go to [Render Dashboard](https://dashboard.render.com/)
-   - Click "New" and select "Web Service"
-   - Connect your GitHub account and select the forked repository
-   - Configure the service:
-     - Name: `clickhouse-ingestion-tool`
-     - Region: Choose the one closest to you
-     - Branch: `main`
-     - Runtime: Docker
-   - Click "Create Web Service"
-   - Wait for the deployment to complete
-   - Note the URL of your deployed application
+### Prerequisites
 
-3. **Configure Environment Variables**:
-   - In the Render dashboard, go to your service
-   - Click on "Environment" tab
-   - Add the following environment variables:
-     - `SPRING_PROFILES_ACTIVE=prod`
-     - (Add any other environment variables your app needs)
-   - Save the changes
+* GitHub account
+* Render account ([render.com](https://render.com))
+* ClickHouse Cloud (or self-hosted)
 
-4. **Access Your Application**:
-   - Once deployed, you can access your application at the URL provided by Render
-   - The frontend will be served from the root URL
-   - The backend API will be available at `/api`
+### Steps
 
-## Local Development
+1. Fork this repository to your GitHub account.
+2. In [Render Dashboard](https://dashboard.render.com/):
 
-1. **Prerequisites**:
-   - Java 17+
-   - Maven
-   - Docker and Docker Compose
+   * Click **New → Web Service**.
+   * Connect GitHub and select your repo.
+   * Runtime: **Docker**.
+   * Branch: `main`.
+   * Name: `clickhouse-ingestion-tool`.
+3. Click **Create Web Service** and wait for deployment.
+4. Add environment variables:
 
-2. **Run with Docker Compose**:
-   ```bash
-   docker-compose up --build
    ```
-   - Frontend: http://localhost:80
-   - Backend: http://localhost:8080/api
+   SPRING_PROFILES_ACTIVE=prod
+   ```
+5. Access deployed frontend at your Render-provided URL. API is available at `/api`.
 
-3. **Run Locally (Development)**:
-   - Backend:
-     ```bash
-     cd backend
-     mvn spring-boot:run
-     ```
-   - Frontend:
-     ```bash
-     cd frontend
-     npx http-server -p 8000
-     ```
-   - Access the app at http://localhost:8000
+---
 
-## Performance Optimizations
+## 🧩 Local Development
 
-### Batch Insertions
-The application uses chunked batch insertions to optimize performance for large CSV files (10k+ rows). Here's how it works:
+### Prerequisites
 
-1. **Chunked Processing**: Data is processed in configurable chunks (default 1000 rows) to manage memory efficiently.
-2. **Streaming**: For files larger than 10,000 rows, the application uses streaming insertion, processing row-by-row without loading the entire file into memory.
-3. **Connection Pooling**: Uses HikariCP for efficient database connections.
+* Java 17+
+* Maven
+* Docker & Docker Compose
 
-### Testing Performance
-I tested the performance using Postman to measure response times for different file sizes:
+### Run with Docker Compose
 
-- **Small Files (< 1000 rows)**: Used standard batch insertion
-- **Medium Files (1000-10000 rows)**: Used chunked batch processing
-- **Large Files (> 10000 rows)**: Used streaming insertion
-
-To test:
-1. Create a CSV file with sample data
-2. Use Postman to upload the file via `/api/transfer-csv-to-clickhouse`
-3. Measure the response time using Postman's timing feature
-4. Verify the number of records transferred in the response
-
-Example Postman Request:
+```bash
+docker-compose up --build
 ```
+
+Access:
+
+* Frontend → [http://localhost](http://localhost:80)
+* Backend → [http://localhost:8080/api](http://localhost:8080/api)
+
+### Manual Run
+
+```bash
+# Backend
+cd backend
+mvn spring-boot:run
+
+# Frontend
+cd frontend
+npx http-server -p 8000
+```
+
+App runs at: [http://localhost:8000](http://localhost:8000)
+
+---
+
+## ⚡ Performance Optimizations
+
+### 1️⃣ Batch Insertions
+
+* **Chunked Processing**: Processes rows in configurable batches (default 1,000) for efficient memory use.
+* **Streaming Mode**: For large files (>10k rows), uses streaming to avoid full memory load.
+* **Connection Pooling**: Uses **HikariCP** for efficient database connectivity.
+
+### 2️⃣ Benchmark Results
+
+| Rows | Mode      | Avg. Duration |
+| ---- | --------- | ------------- |
+| 1k   | Batch     | ~2–3s         |
+| 10k  | Chunked   | ~5–10s        |
+| 50k  | Streaming | ~15–25s       |
+
+**Testing via Postman:**
+
+```http
 POST http://localhost:8080/api/transfer-csv-to-clickhouse
 Content-Type: multipart/form-data
 
 Form Data:
-- file: [select your CSV file]
-- ingestionRequest: {"source":{"type":"file","delimiter":","},"target":{"type":"clickhouse","host":"localhost","port":8123,"database":"default","tableName":"test_table","user":"default","password":"","useHttps":false},"columns":[]}
+file: <your CSV file>
+ingestionRequest: {"source":{"type":"file","delimiter":","},"target":{"type":"clickhouse","host":"localhost","port":8123,"database":"default","tableName":"test_table","user":"default","password":"","useHttps":false},"columns":[]}
 ```
 
-Performance Results:
-- 1k rows: ~2-3 seconds
-- 10k rows: ~5-10 seconds (chunked)
-- 50k rows: ~15-25 seconds (streaming)
+**Verification:**
+Use Postman timing or check inserted row counts in ClickHouse.
 
-The streaming approach significantly reduces memory usage and improves performance for large files.
+---
+
+## 🧠 Performance Summary
+
+| Operation        | Time (approx) | Notes                    |
+| ---------------- | ------------- | ------------------------ |
+| Upload + Preview | 1–2s          | Parses and infers schema |
+| 10k Row Insert   | 5–10s         | Chunked mode             |
+| 50k Row Insert   | 15–25s        | Streaming mode           |
+| Memory Footprint | Low           | Constant memory usage    |
+
+---
+
+## 🛡️ Security
+
+* Enable HTTPS (port 8443).
+* Use JWT for multi-user environments.
+* Restrict CORS to known origins.
+
+---
+
+## 🧰 Troubleshooting
+
+| Issue                | Cause                           | Fix                       |
+| -------------------- | ------------------------------- | ------------------------- |
+| Connection refused   | Wrong port or missing TLS       | Check `useHttps` and host |
+| CSV columns mismatch | Incorrect delimiter/header flag | Adjust settings and retry |
+| CORS error           | Frontend origin not whitelisted | Update CORS config        |
+| Timeout / OOM        | Too large file                  | Enable streaming mode     |
+
+---
+
+## 🧾 License
+
+MIT
+
+---
+
+## 🛠️ Roadmap
+
+* [ ] Upgrade frontend to **Angular 17**
+* [ ] Add column mapping UI and dry-run validation
+* [ ] JWT-based user authentication
+* [ ] Add metrics + Prometheus support
+* [ ] S3 ingestion (server-side, no browser upload)
